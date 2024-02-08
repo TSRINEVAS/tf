@@ -1,9 +1,53 @@
 steps:
-- name: 'gcr.io/cloud-builders/npm'
-  args: ['install']
+- id: 'branch name'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'  
+  args: 
+  - '-c'
+  - | 
+      echo "***************"
+      echo "$BRANCH_NAME"
+      echo "***************"
+  
 
-- name: 'gcr.io/cloud-builders/npm'
-  args: ['run', 'build']
+# [START tf-init]
+- id: 'tf init'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      terraform init
+# [END tf-init]
 
+# [START tf-plan]
+- id: 'tf plan'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      terraform plan
+# [END tf-plan]
+
+# [START tf-apply]
+- id: 'tf apply'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - | 
+      if [[ "$BRANCH_NAME" == "master" ]]; then
+       echo "Branch is 'master', proceeding with terraform"          
+        terraform apply -auto-approve
+        exit 0
+      else
+        echo "***************************** SKIPPING APPLYING *******************************"
+        echo "Branch is not 'master', SKIPPING terraform"
+        exit 0
+        
+      fi
+      
+# [END tf-apply]      
 options:
   logging: CLOUD_LOGGING_ONLY  # or NONE
