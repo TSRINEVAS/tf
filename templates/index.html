@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boba Bazaar India</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-mark">B</div>
+      <div>
+        <h1>Boba Bazaar India</h1>
+        <span>Fresh tea, local flavors, quick delivery</span>
+      </div>
+    </div>
+    <button class="cart-button" onclick="document.querySelector('aside').scrollIntoView({behavior: 'smooth'})">
+      Cart <span id="cartCount">0</span>
+    </button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Small-batch boba bar</span>
+      <h2>Colorful teas, creamy pearls, and India-inspired specials.</h2>
+      <p>Build a beautiful boba order with milk teas, fruit refreshers, chai blends, and premium layered drinks.</p>
+      <div class="hero-actions">
+        <a class="primary-link" href="#menu">Explore menu</a>
+        <a class="secondary-link" href="#checkoutForm">Checkout</a>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section id="menu">
+      <div class="intro">
+        <div>
+          <span class="section-kicker">Today&apos;s menu</span>
+          <h2>Pick your perfect sip.</h2>
+          <p>Freshly brewed bases, chewy pearls, bright fruit, and cozy spice notes in every cup.</p>
+        </div>
+        <div class="filters" id="filters"></div>
+      </div>
+      <div class="grid" id="products"></div>
+    </section>
+
+    <aside>
+      <div class="panel">
+        <h2>Your Order</h2>
+        <div class="cart-items" id="cartItems"></div>
+      </div>
+      <div class="panel totals">
+        <div><span>Subtotal</span><strong id="subtotal">Rs. 0</strong></div>
+        <div><span>Packaging</span><strong id="packaging">Rs. 0</strong></div>
+        <div><span>Delivery</span><strong id="delivery">Rs. 0</strong></div>
+        <div class="grand-total"><span>Total</span><strong id="total">Rs. 0</strong></div>
+      </div>
+      <div class="panel">
+        <form id="checkoutForm">
+          <label>
+            Customer name
+            <input name="name" autocomplete="name" required placeholder="Aarav Sharma">
+          </label>
+          <label>
+            Phone
+            <input name="phone" autocomplete="tel" required placeholder="+91 98765 43210">
+          </label>
+          <label>
+            Delivery address
+            <textarea name="address" required placeholder="Street, area, city, pincode"></textarea>
+          </label>
+          <label>
+            Payment
+            <select name="payment">
+              <option>UPI on delivery</option>
+              <option>Cash on delivery</option>
+              <option>Card on delivery</option>
+            </select>
+          </label>
+          <button class="checkout" id="checkoutButton" disabled>Place Order</button>
+          <div class="message" id="message"></div>
+        </form>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
