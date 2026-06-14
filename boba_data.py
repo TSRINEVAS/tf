@@ -51,6 +51,8 @@ PRODUCTS = [
 
 
 ORDERS = []
+CATERING_REQUESTS = []
+LOYALTY_MEMBERS = []
 
 
 def product_by_id(product_id):

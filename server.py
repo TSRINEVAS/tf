@@ -3,8 +3,8 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 import json
 
-from boba_data import ORDERS, PRODUCTS
-from order_service import create_order
+from boba_data import CATERING_REQUESTS, LOYALTY_MEMBERS, ORDERS, PRODUCTS
+from order_service import create_catering_request, create_loyalty_member, create_order
 
 
 HOST = "127.0.0.1"
@@ -79,26 +79,52 @@ class BobaShopHandler(BaseHTTPRequestHandler):
             send_json(self, {"orders": ORDERS[-limit:]})
             return
 
+        if path == "/api/catering":
+            send_json(self, {"requests": CATERING_REQUESTS[-20:]})
+            return
+
+        if path == "/api/loyalty":
+            send_json(self, {"members": LOYALTY_MEMBERS[-20:]})
+            return
+
         send_json(self, {"error": "Not found"}, 404)
 
     def do_POST(self):
         path = urlparse(self.path).path
-
-        if path != "/api/orders":
-            send_json(self, {"error": "Not found"}, 404)
-            return
 
         payload = read_json(self)
         if payload is None:
             send_json(self, {"error": "Invalid JSON payload"}, 400)
             return
 
-        order, error = create_order(payload.get("customer", {}), payload.get("items", []))
-        if error:
-            send_json(self, error, 400)
+        if path == "/api/orders":
+            order, error = create_order(payload.get("customer", {}), payload.get("items", []))
+            if error:
+                send_json(self, error, 400)
+                return
+
+            send_json(self, {"order": order}, 201)
             return
 
-        send_json(self, {"order": order}, 201)
+        if path == "/api/catering":
+            catering_request, error = create_catering_request(payload)
+            if error:
+                send_json(self, error, 400)
+                return
+
+            send_json(self, {"request": catering_request}, 201)
+            return
+
+        if path == "/api/loyalty":
+            member, error = create_loyalty_member(payload)
+            if error:
+                send_json(self, error, 400)
+                return
+
+            send_json(self, {"member": member}, 201)
+            return
+
+        send_json(self, {"error": "Not found"}, 404)
 
 
 def run_server():

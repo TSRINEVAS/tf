@@ -10,12 +10,35 @@ function saveCart() {
   localStorage.setItem("bobaCart", JSON.stringify(state.cart));
 }
 
+async function postJson(url, payload) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Request failed.");
+  }
+
+  return result;
+}
+
+function showMessage(elementId, text, isError = false) {
+  const message = document.getElementById(elementId);
+  message.style.display = "block";
+  message.textContent = text;
+  message.classList.toggle("error", isError);
+}
+
 async function loadProducts() {
   const response = await fetch("/api/products");
   state.products = await response.json();
   renderFilters();
   renderProducts();
   renderCart();
+  renderRecentOrders();
 }
 
 function renderFilters() {
@@ -31,6 +54,7 @@ function setCategory(category) {
   state.category = category;
   renderFilters();
   renderProducts();
+  document.getElementById("menu").scrollIntoView({ behavior: "smooth" });
 }
 
 function renderProducts() {
@@ -61,6 +85,7 @@ function addToCart(id) {
   state.cart[id] = (state.cart[id] || 0) + 1;
   saveCart();
   renderCart();
+  showMessage("message", "Added to cart. Your drink is waiting at checkout.");
 }
 
 function changeQty(id, delta) {
@@ -112,6 +137,25 @@ function renderCart() {
   `).join("") : `<div class="empty">Your cart is empty. Add a drink to begin.</div>`;
 }
 
+async function renderRecentOrders() {
+  const target = document.getElementById("recentOrders");
+  if (!target) {
+    return;
+  }
+
+  const response = await fetch("/api/orders?limit=4");
+  const result = await response.json();
+  const orders = result.orders || [];
+
+  target.innerHTML = orders.length ? orders.reverse().map(order => `
+    <article>
+      <strong>${order.id}</strong>
+      <span>${order.items.length} item${order.items.length === 1 ? "" : "s"} - ${money(order.total)}</span>
+      <small>${order.status} - ETA ${order.eta}</small>
+    </article>
+  `).join("") : `<div class="empty">No orders yet. The first cup can be yours.</div>`;
+}
+
 document.getElementById("checkoutForm").addEventListener("submit", async event => {
   event.preventDefault();
   const formData = new FormData(event.currentTarget);
@@ -120,15 +164,11 @@ document.getElementById("checkoutForm").addEventListener("submit", async event =
     items: Object.entries(state.cart).map(([id, quantity]) => ({ id, quantity }))
   };
 
-  const response = await fetch("/api/orders", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  const result = await response.json();
-
-  if (!response.ok) {
-    alert(result.error || "Could not place order.");
+  let result;
+  try {
+    result = await postJson("/api/orders", payload);
+  } catch (error) {
+    showMessage("message", error.message || "Could not place order.", true);
     return;
   }
 
@@ -139,7 +179,47 @@ document.getElementById("checkoutForm").addEventListener("submit", async event =
 
   const message = document.getElementById("message");
   message.style.display = "block";
+  message.classList.remove("error");
   message.textContent = `Order ${result.order.id} placed. Total ${money(result.order.total)}. Estimated pickup/delivery: ${result.order.eta}.`;
+  renderRecentOrders();
+});
+
+document.querySelectorAll("[data-category]").forEach(button => {
+  button.addEventListener("click", () => setCategory(button.dataset.category));
+});
+
+document.querySelectorAll(".featured article").forEach((card, index) => {
+  const featuredIds = ["strawberry-matcha", "mango-green-tea", "brown-sugar-boba", "taro-latte"];
+  card.addEventListener("click", () => {
+    addToCart(featuredIds[index]);
+    document.querySelector("aside").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+
+document.getElementById("cateringForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+
+  try {
+    const result = await postJson("/api/catering", payload);
+    showMessage("cateringMessage", `Request ${result.request.id} received. We will call you within 24 hours.`);
+    event.currentTarget.reset();
+  } catch (error) {
+    showMessage("cateringMessage", error.message || "Could not submit catering request.", true);
+  }
+});
+
+document.getElementById("loyaltyForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+
+  try {
+    const result = await postJson("/api/loyalty", payload);
+    showMessage("loyaltyMessage", `${result.member.name}, your member ID is ${result.member.id}. You have ${result.member.points} points.`);
+    event.currentTarget.reset();
+  } catch (error) {
+    showMessage("loyaltyMessage", error.message || "Could not join loyalty club.", true);
+  }
 });
 
 loadProducts();

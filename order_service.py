@@ -1,7 +1,11 @@
 import time
 import uuid
 
-from boba_data import ORDERS, product_by_id
+from boba_data import CATERING_REQUESTS, LOYALTY_MEMBERS, ORDERS, product_by_id
+
+
+def clean_text(value):
+    return str(value or "").strip()
 
 
 def calculate_order(items):
@@ -41,7 +45,7 @@ def calculate_order(items):
 
 def create_order(customer, items):
     required_fields = ["name", "phone", "address", "payment"]
-    missing_fields = [field for field in required_fields if not str(customer.get(field, "")).strip()]
+    missing_fields = [field for field in required_fields if not clean_text(customer.get(field))]
     if missing_fields:
         return None, {"error": "Missing customer fields", "fields": missing_fields}
 
@@ -53,10 +57,10 @@ def create_order(customer, items):
         "id": "BOBA-" + uuid.uuid4().hex[:8].upper(),
         "created_at": int(time.time()),
         "customer": {
-            "name": customer["name"].strip(),
-            "phone": customer["phone"].strip(),
-            "address": customer["address"].strip(),
-            "payment": customer["payment"].strip(),
+            "name": clean_text(customer["name"]),
+            "phone": clean_text(customer["phone"]),
+            "address": clean_text(customer["address"]),
+            "payment": clean_text(customer["payment"]),
         },
         "items": order_summary["items"],
         "subtotal": order_summary["subtotal"],
@@ -68,3 +72,56 @@ def create_order(customer, items):
     }
     ORDERS.append(order)
     return order, None
+
+
+def create_catering_request(payload):
+    required_fields = ["name", "phone", "event_date", "guest_count", "event_type"]
+    missing_fields = [field for field in required_fields if not clean_text(payload.get(field))]
+    if missing_fields:
+        return None, {"error": "Missing catering fields", "fields": missing_fields}
+
+    try:
+        guest_count = int(payload.get("guest_count", 0))
+    except (TypeError, ValueError):
+        guest_count = 0
+
+    if guest_count < 10:
+        return None, {"error": "Catering starts at 10 guests"}
+
+    request = {
+        "id": "CAT-" + uuid.uuid4().hex[:8].upper(),
+        "created_at": int(time.time()),
+        "name": clean_text(payload.get("name")),
+        "phone": clean_text(payload.get("phone")),
+        "event_date": clean_text(payload.get("event_date")),
+        "guest_count": guest_count,
+        "event_type": clean_text(payload.get("event_type")),
+        "notes": clean_text(payload.get("notes")),
+        "status": "requested",
+    }
+    CATERING_REQUESTS.append(request)
+    return request, None
+
+
+def create_loyalty_member(payload):
+    required_fields = ["name", "phone"]
+    missing_fields = [field for field in required_fields if not clean_text(payload.get(field))]
+    if missing_fields:
+        return None, {"error": "Missing loyalty fields", "fields": missing_fields}
+
+    phone = clean_text(payload.get("phone"))
+    existing_member = next((member for member in LOYALTY_MEMBERS if member["phone"] == phone), None)
+    if existing_member:
+        return existing_member, None
+
+    member = {
+        "id": "BBI-" + uuid.uuid4().hex[:6].upper(),
+        "created_at": int(time.time()),
+        "name": clean_text(payload.get("name")),
+        "phone": phone,
+        "favorite": clean_text(payload.get("favorite")) or "Surprise me",
+        "points": 50,
+        "status": "active",
+    }
+    LOYALTY_MEMBERS.append(member)
+    return member, None

@@ -27,6 +27,14 @@ From this project folder, run:
 python python.py
 ```
 
+To turn off the screen after 10 minutes, run:
+
+```powershell
+python python.py --screen-off 10
+```
+
+Keep the script running until the timer finishes. Press `Ctrl+C` to cancel the timer.
+
 ## Example Output
 
 ```text

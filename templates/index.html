@@ -15,6 +15,12 @@
         <span>Fresh tea, local flavors, quick delivery</span>
       </div>
     </div>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#">Home</a>
+      <a href="#menu">Menu | Order</a>
+      <a href="#catering">Catering</a>
+      <a href="#loyalty">Loyalty Club</a>
+    </nav>
     <button class="cart-button" onclick="document.querySelector('aside').scrollIntoView({behavior: 'smooth'})">
       Cart <span id="cartCount">0</span>
     </button>
@@ -23,13 +29,37 @@
   <section class="hero">
     <div class="hero-copy">
       <span class="eyebrow">Small-batch boba bar</span>
-      <h2>Colorful teas, creamy pearls, and India-inspired specials.</h2>
-      <p>Build a beautiful boba order with milk teas, fruit refreshers, chai blends, and premium layered drinks.</p>
+      <h2>Joy in every sip.</h2>
+      <p>Fresh fruit teas, cozy milk teas, and Indian-inspired specials made bright, creamy, and ready to order.</p>
       <div class="hero-actions">
-        <a class="primary-link" href="#menu">Explore menu</a>
+        <a class="primary-link" href="#menu">Order Now</a>
         <a class="secondary-link" href="#checkoutForm">Checkout</a>
       </div>
     </div>
+    <div class="hero-showcase" aria-hidden="true">
+      <div class="hero-drink hero-drink-one"></div>
+      <div class="hero-drink hero-drink-two"></div>
+      <div class="hero-drink hero-drink-three"></div>
+    </div>
+  </section>
+
+  <section class="featured" aria-label="Featured drinks">
+    <article>
+      <div class="mini-drink strawberry"></div>
+      <strong>Strawberry Matcha</strong>
+    </article>
+    <article>
+      <div class="mini-drink mango"></div>
+      <strong>Mango Green Tea</strong>
+    </article>
+    <article>
+      <div class="mini-drink coffee"></div>
+      <strong>Brown Sugar Boba</strong>
+    </article>
+    <article>
+      <div class="mini-drink taro"></div>
+      <strong>Taro Latte</strong>
+    </article>
   </section>
 
   <main>
@@ -84,6 +114,174 @@
       </div>
     </aside>
   </main>
+
+  <section class="selection" id="selection">
+    <div class="section-heading">
+      <span class="section-kicker">Our selection</span>
+      <h2>Fresh categories for every mood.</h2>
+    </div>
+    <div class="selection-grid">
+      <article>
+        <div class="selection-art fruit"></div>
+        <h3>Fruit Tea</h3>
+        <p>Bright jasmine tea meets bold fruit flavors for a crisp, colorful refresh.</p>
+        <button class="text-action" data-category="Fruit Tea">Shop fruit tea</button>
+      </article>
+      <article>
+        <div class="selection-art milk"></div>
+        <h3>Milk Tea</h3>
+        <p>Handcrafted tea and milk blends with soft sweetness and chewy pearls.</p>
+        <button class="text-action" data-category="Milk Tea">Shop milk tea</button>
+      </article>
+      <article>
+        <div class="selection-art chai"></div>
+        <h3>India Special</h3>
+        <p>Masala chai, mango, and cafe flavors tuned for a local boba twist.</p>
+        <button class="text-action" data-category="India Special">Shop specials</button>
+      </article>
+      <article>
+        <div class="selection-art premium"></div>
+        <h3>Premium</h3>
+        <p>Layered drinks with matcha, strawberry, crystal boba, and extra flair.</p>
+        <button class="text-action" data-category="Premium">Shop premium</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="forms-band" id="catering">
+    <div class="section-heading">
+      <span class="section-kicker">Catering</span>
+      <h2>Bring boba to the party.</h2>
+    </div>
+    <div class="form-layout">
+      <form id="cateringForm" class="feature-form">
+        <label>
+          Name
+          <input name="name" autocomplete="name" required placeholder="Event contact">
+        </label>
+        <label>
+          Phone
+          <input name="phone" autocomplete="tel" required placeholder="+91 98765 43210">
+        </label>
+        <label>
+          Event date
+          <input type="date" name="event_date" required>
+        </label>
+        <label>
+          Guests
+          <input type="number" name="guest_count" min="10" required placeholder="40">
+        </label>
+        <label>
+          Event type
+          <select name="event_type" required>
+            <option value="">Choose one</option>
+            <option>Birthday</option>
+            <option>Office event</option>
+            <option>Wedding</option>
+            <option>College fest</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>
+          Notes
+          <textarea name="notes" placeholder="Favorite flavors, timing, delivery details"></textarea>
+        </label>
+        <button class="checkout">Request Catering</button>
+        <div class="message" id="cateringMessage"></div>
+      </form>
+      <div class="feature-panel">
+        <h3>Party packs include</h3>
+        <p>Bulk drinks, sealed cups, topping choices, flavor labels, and pickup or local delivery planning.</p>
+        <div class="stat-row">
+          <span><strong>10+</strong> guests</span>
+          <span><strong>4</strong> flavor sets</span>
+          <span><strong>24h</strong> callback</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="forms-band loyalty" id="loyalty">
+    <div class="section-heading">
+      <span class="section-kicker">Loyalty club</span>
+      <h2>Earn sweet rewards.</h2>
+    </div>
+    <div class="form-layout">
+      <div class="feature-panel reward-card">
+        <h3>Welcome bonus</h3>
+        <p>Join today and start with 50 points toward your next boba run.</p>
+        <div class="stamp-row" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <form id="loyaltyForm" class="feature-form">
+        <label>
+          Name
+          <input name="name" autocomplete="name" required placeholder="Your name">
+        </label>
+        <label>
+          Phone
+          <input name="phone" autocomplete="tel" required placeholder="+91 98765 43210">
+        </label>
+        <label>
+          Favorite drink
+          <select name="favorite">
+            <option>Brown Sugar Boba</option>
+            <option>Mango Green Tea</option>
+            <option>Masala Chai Boba</option>
+            <option>Strawberry Matcha</option>
+            <option>Surprise me</option>
+          </select>
+        </label>
+        <button class="checkout">Join Loyalty Club</button>
+        <div class="message" id="loyaltyMessage"></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="reviews" id="reviews">
+    <div class="section-heading">
+      <span class="section-kicker">Reviews</span>
+      <h2>Made for regulars.</h2>
+    </div>
+    <div class="review-grid">
+      <blockquote>
+        <p>The mango tea tastes fresh, the pearls are soft, and checkout is super quick.</p>
+        <cite>Priya M.</cite>
+      </blockquote>
+      <blockquote>
+        <p>Beautiful drinks and cozy flavors. The masala chai boba is my new favorite.</p>
+        <cite>Rahul S.</cite>
+      </blockquote>
+      <blockquote>
+        <p>Perfect for office orders. Everyone found something bright and fun.</p>
+        <cite>Anika R.</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="orders-panel">
+    <div class="section-heading">
+      <span class="section-kicker">Recent orders</span>
+      <h2>Fresh from the queue.</h2>
+    </div>
+    <div class="recent-orders" id="recentOrders"></div>
+  </section>
+
+  <footer>
+    <div>
+      <h2>Store Hours</h2>
+      <p>Mon-Thu 10am - 10pm<br>Fri-Sun 10am - 11pm</p>
+    </div>
+    <div>
+      <h2>Address</h2>
+      <p>Hyderabad, Telangana<br>Pickup and local delivery available</p>
+    </div>
+    <div>
+      <h2>Contact</h2>
+      <p>hello@bobabazaar.example<br>+91 98765 43210</p>
+    </div>
+  </footer>
 
   <script src="/static/app.js"></script>
 </body>
